@@ -9,7 +9,6 @@ function App() {
       value: "",
       error: "",
     },
-
     email: {
       value: "",
       error: "",
@@ -38,10 +37,9 @@ function App() {
 
   const [submittedData, setSubmittedData] = useState([]);
   const [isUpdate, setIsUpdate] = useState(false);
-  // const [Text, setText] = useState("");
   const [searchData, setSearchData] = useState([]);
 
-  const handlevalidate = ({ target }) => {
+  const handlevalidate = ({ target }) => {    
     const { name, value } = target;
     const field = validationSchema[name];
     let error = "";
@@ -71,12 +69,12 @@ function App() {
     }
   };
 
-  // const isvalidate = () => {
-  //   const haserror = Object.keys(formData.current).filter(
-  //     (val) => formData.current[val]?.error
-  //   );
-  //   return haserror?.length > 0;
-  // };
+  const isvalidate = () => {
+    const haserror = Object.keys(formData.current).filter(
+      (val) => formData.current[val]?.error
+    );
+    return haserror?.length > 0;
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -87,7 +85,6 @@ function App() {
       name: formData.current.name.value,
       email: formData.current.email.value,
     };
-
     if (index > -1) {
       newState[index] = {
         ...newState[index],
@@ -104,11 +101,10 @@ function App() {
         },
       ];
     }
-
     setSubmittedData(newState);
-    Array.from(document.querySelectorAll("input")).forEach(
-      (input) => (input.value = "")
-    );
+    // Array.from(document.querySelectorAll("input")).forEach(
+    //   (input) => (input.value = "")
+    // );
     formData.current.id = 0;
     formData.current.name.value = "";
     formData.current.email.value = "";
@@ -123,23 +119,9 @@ function App() {
   };
 
   const handleDelete = (index) => {
-    // Remove the entry from the submittedData array when "Delete" button is clicked
     const updatedData = submittedData.filter((data) => data.id !== index);
     setSubmittedData(updatedData);
   };
-
-  // const filteredUsers = React.useMemo(
-  //   () =>
-  //     submittedData.filter((user) => {
-  //       console.log("Filter function is running ..."); // this gets logged only when the search keyword changes
-  //       return user.name.includes(searchTerm);
-  //     }),
-  //   [searchTerm]
-  // );
-
-  // const handletext = (e) => {
-  //   setsearchterm(e.target.value);
-  // };
 
   const debounce = (func) => {
     let timer;
@@ -154,29 +136,19 @@ function App() {
   };
 
   const handleChange = (value) => {
-    setTimeout(() => {
-      console.log("value", value, Object.values(submittedData).length)      
-      const filterData = Object.values(submittedData).filter((user) => {
-        return user.name.includes(value) || user.email.includes(value);
-      });
-      setSearchData(filterData);
-    }, 1000);
+
+
+    // console.log( Object.values(submittedData).filter((user) => {
+    //   return user.name.toLowerCase().includes(value) || user.email.toLowerCase().includes(value);
+    // }));
+    const filterData = value?Object.values(submittedData).filter((user) => {
+      return user.name.toLowerCase().includes(value) || user.email.toLowerCase().includes(value);
+    }):[];
+    console.log(filterData);
+    setSearchData(filterData);
   };
 
-  const optimizedFn = useCallback(debounce(handleChange), []);
-
-  //   const hadlevalidation = ()=>{
-
-  //     const name = username.current.value
-
-  // const test  = /[a-zA-z]+$/.test(name) && name.trim() !=='';
-
-  //     // {formData.current.name  ? <p style={{ color: 'red' }}>Name is required</p> : null}
-  //     if(test)
-  //     {
-  //      alert("name is nt crrect");
-  //     }
-  //   }
+  const optimizedFn = useCallback(debounce(handleChange), [submittedData]);
 
   // var isvalidate = Object.values(formData).filter(function (val) {
   //   console.log("testing validate",val.name.error)
@@ -192,15 +164,10 @@ function App() {
           Name:
           <input
             type="text"
-            // ref={formData.current.name}
-
             name="name"
-            // defaultValue=""
             defaultValue={formData?.current?.name?.value}
-            // onChange={(e) => {
-            //   formData.current.name = e.target.value;
-            // }}
             onChange={handlevalidate}
+            onBlur={handlevalidate}
           />
         </label>
 
@@ -215,9 +182,9 @@ function App() {
             type="text"
             name="email"
             // id="email"
-
             defaultValue={formData?.current?.email?.value}
             onChange={handlevalidate}
+            onBlur={handlevalidate}
           />
           <div id="email" style={{ display: "none" }}>
             please provide valid email
