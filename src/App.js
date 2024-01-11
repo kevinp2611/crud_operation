@@ -40,16 +40,53 @@ function App() {
   const [isUpdate, setIsUpdate] = useState(false);
   // const [Text, setText] = useState("");
   const [searchData, setSearchData] = useState([]);
-  const username = useRef("");
 
-  const handleSubmit =  (e) => {
+  const handlevalidate = ({ target }) => {
+    const { name, value } = target;
+    const field = validationSchema[name];
+    let error = "";
+    if (field.required) {
+      if (!value) {
+        error = "This field is required.";
+      } else {
+        if (field.validator.regEx) {
+          if (!field.validator.regEx.test(value)) {
+            error = field.validator.error;
+          }
+        }
+      }
+    }
+
+    formData.current[name].value = value;
+    formData.current[name].error = error;
+    var element1 = document.getElementById(name);
+    const inputField = document.getElementsByName(name)[0];
+    if (error) {
+      element1.style.display = "block";
+      element1.style.color = "red";
+      inputField.style.borderColor = "red";
+    } else {
+      element1.style.display = "none";
+      inputField.style.borderColor = "";
+    }
+  };
+
+  // const isvalidate = () => {
+  //   const haserror = Object.keys(formData.current).filter(
+  //     (val) => formData.current[val]?.error
+  //   );
+  //   return haserror?.length > 0;
+  // };
+
+  const handleSubmit = (e) => {
     e.preventDefault();
+    // if (!isvalidate()) {
     const index = submittedData.findIndex((x) => x.id === formData.current.id);
     let newState = [...submittedData];
-const blank ={
-  name :formData.current.name.value,
-  email: formData.current.email.value
-}
+    const blank = {
+      name: formData.current.name.value,
+      email: formData.current.email.value,
+    };
 
     if (index > -1) {
       newState[index] = {
@@ -58,7 +95,6 @@ const blank ={
         email: blank.email,
       };
     } else {
-      console.log("formdata",blank)
       newState = [
         ...submittedData,
         {
@@ -68,7 +104,11 @@ const blank ={
         },
       ];
     }
+
     setSubmittedData(newState);
+    Array.from(document.querySelectorAll("input")).forEach(
+      (input) => (input.value = "")
+    );
     formData.current.id = 0;
     formData.current.name.value = "";
     formData.current.email.value = "";
@@ -76,7 +116,6 @@ const blank ={
   };
 
   const handleEdit = (data) => {
-    // Set the form data and editIndex when "Edit" button is clicked
     formData.current.name.value = data.name;
     formData.current.email.value = data.email;
     formData.current.id = data.id;
@@ -115,10 +154,13 @@ const blank ={
   };
 
   const handleChange = (value) => {
-    const filterData = Object.values(submittedData).filter((user) => {
-      return user.name.includes(value) || user.email.includes(value);
-    });
-    setSearchData(filterData);
+    setTimeout(() => {
+      console.log("value", value, Object.values(submittedData).length)      
+      const filterData = Object.values(submittedData).filter((user) => {
+        return user.name.includes(value) || user.email.includes(value);
+      });
+      setSearchData(filterData);
+    }, 1000);
   };
 
   const optimizedFn = useCallback(debounce(handleChange), []);
@@ -136,26 +178,10 @@ const blank ={
   //     }
   //   }
 
-  const handlevalidate = ({ target }) => {
-    const { name, value } = target;
-
-    const field = validationSchema[name];
-    let error = "";
-    if (field.required) {
-      if (!value) {
-        error = "This field is required.";
-      } else {
-        if (field.validator.regEx) {
-          if (!field.validator.regEx.test(value)) {
-            error = field.validator.error;
-          }
-        }
-      }
-    }
-    formData.current[name].value = value;
-    formData.current[name].error = error;
-    console.log("formdata",formData,value)
-  };
+  // var isvalidate = Object.values(formData).filter(function (val) {
+  //   console.log("testing validate",val.name.error)
+  //   return (val.name.error !==" " );
+  // }).length > 0;
 
   return (
     <div>
@@ -166,10 +192,10 @@ const blank ={
           Name:
           <input
             type="text"
-            // onBlur={handlename}
-           
+            // ref={formData.current.name}
+
             name="name"
-            id="name"
+            // defaultValue=""
             defaultValue={formData?.current?.name?.value}
             // onChange={(e) => {
             //   formData.current.name = e.target.value;
@@ -177,24 +203,25 @@ const blank ={
             onChange={handlevalidate}
           />
         </label>
-        {/* {formData.current.name.error ? (
-            <h1>{formData.current.name.error}</h1>
-            ) : (
-              ""
-            )} */}
+
+        <div id="name" style={{ display: "none" }}>
+          please provide valid name
+        </div>
+
         <br />
         <label>
           Email:
           <input
             type="text"
             name="email"
-            id="email"
+            // id="email"
+
             defaultValue={formData?.current?.email?.value}
-            // onChange={(e) => {
-            //   formData.current.email = e.target.value;
-            // }}
             onChange={handlevalidate}
           />
+          <div id="email" style={{ display: "none" }}>
+            please provide valid email
+          </div>
         </label>
         <input type="hidden" name="id" value={formData?.current?.id}></input>
         <br />
@@ -208,23 +235,23 @@ const blank ={
         name="searchTerm"
         onChange={(e) => optimizedFn(e.target.value)}
       />
-      {/* < button type="button" onClick={handleSearch}> button</button> */}
 
       <h2>Submitted Data:</h2>
       <ul>
-        {(Object.values(searchData).length > 0 ? Object.values(searchData) : submittedData).map(
-          (data, index) => (
-            <li key={index}>
-              {`Name: ${data.name}, Email: ${data.email}`}
-              <button type="button" onClick={() => handleEdit(data)}>
-                Edit
-              </button>
-              <button type="button" onClick={() => handleDelete(data.id)}>
-                Delete
-              </button>
-            </li>
-          )
-        )}
+        {(Object.values(searchData).length > 0
+          ? Object.values(searchData)
+          : submittedData
+        ).map((data, index) => (
+          <li key={index}>
+            {`Name: ${data.name}, Email: ${data.email}`}
+            <button type="button" onClick={() => handleEdit(data)}>
+              Edit
+            </button>
+            <button type="button" onClick={() => handleDelete(data.id)}>
+              Delete
+            </button>
+          </li>
+        ))}
       </ul>
     </div>
   );
