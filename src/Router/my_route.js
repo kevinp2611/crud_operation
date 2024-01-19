@@ -1,10 +1,10 @@
-import User from "../Components/user/Main";
+import Wrapper from "../Components/user/Wrapper";
 import Details from "../Components/userDetails/detaiils";
 
 const routes = [
     {
       path: "/",
-      component: User ,
+      component: Wrapper ,
     
     },
     {

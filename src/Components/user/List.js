@@ -1,56 +1,73 @@
 // import Details from "../userDetails/detaiils";
 import NoFound from "./NoFound";
 import { useNavigate } from "react-router-dom";
+import { user } from "./userContext";
+import { useContext, useMemo } from "react";
+import { msg } from "./MsgContext";
 
-const List = ({
-  optimizedFn,
-  searchData,
-  submittedData,
-  handleEdit,
-  handleDelete,
-  searchText,
-}) => {
+const List = ({ searchText, handleEdit }) => {
+  let navigate = useNavigate();
+  const { submittedData, setSubmittedData, searchData } = useContext(user);
+  const { setIsdone, setColor } = useContext(msg);
 
+  const handleDelete = (index) => {
+    const ans = window.confirm("are you sure ");
+    if (ans) {
+      const updatedData = submittedData.filter((data) => data.id !== index);
+      setIsdone("Item Deleted");
+      setColor("red");
+      setSubmittedData(updatedData);
+      setIsdone("Item Deleted");
+      setColor("red");
+    }
+  };
 
-  let navigate = useNavigate(); 
- 
+  return useMemo(
+    () => (
+      <div>
+        {console.log("list")}
 
-  return (
-    <div>
-      {/* <input
+        {/* <input
         type="text"
         name="searchTerm"
         onChange={(e) => optimizedFn(e.target.value)}
       /> */}
-      <h2>Submitted Data:</h2>
-      <ul>
-        {(searchText.current.value !== "" && searchData.length === 0) ||
-        submittedData.length === 0 ? (
-          <div>
-            {" "}
-            <NoFound />
-          </div>
-        ) : (
-          (Object.values(searchData).length > 0
-            ? Object.values(searchData)
-            : submittedData
-          ).map((data, index) => (
-            <li key={index}>
-              {`Name: ${data.name}, Email: ${data.email}`}
-              <button type="button" onClick={() => handleEdit(data)}>
-                Edit
-              </button>
-              <button type="button" onClick={() => handleDelete(data.id)}>
-                Delete
-              </button>
-              <button type="button" onClick= {() =>navigate(`/user-detail`,{ state: {userData: data} })}>
-                Details
-              </button>
-            </li>
-          ))
-        )}
-      </ul>
-    </div>
+        <h2>Submitted Data:</h2>
+        <ul>
+          {(searchText.current.value !== "" && searchData.length === 0) ||
+          submittedData.length === 0 ? (
+            <div>
+              {" "}
+              <NoFound />
+            </div>
+          ) : (
+            (Object.values(searchData).length > 0
+              ? Object.values(searchData)
+              : submittedData
+            ).map((data, index) => (
+              <li key={index}>
+                {`Name: ${data.name}, Email: ${data.email}`}
+                <button type="button" onClick={() => handleEdit(data)}>
+                  Edit
+                </button>
+                <button type="button" onClick={() => handleDelete(data.id)}>
+                  Delete
+                </button>
+                <button
+                  type="button"
+                  onClick={() =>
+                    navigate(`/user-detail`, { state: { userData: data } })
+                  }
+                >
+                  Details
+                </button>
+              </li>
+            ))
+          )}
+        </ul>
+      </div>
+    ),
+    [submittedData, searchData]
   );
 };
 export default List;
