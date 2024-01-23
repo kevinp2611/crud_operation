@@ -11,6 +11,7 @@ const Wrapper = () => {
   
   return(
     <>
+    {console.log("token",localStorage)}
       <UserContext>
     <MsgContext> 
       <User/>

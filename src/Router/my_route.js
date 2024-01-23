@@ -1,7 +1,10 @@
+import Login from "../Components/Login/Login";
 import Wrapper from "../Components/user/Wrapper";
 import Details from "../Components/userDetails/detaiils";
 
-const routes = [
+
+const Privateroutes = [
+  
     {
       path: "/",
       component: Wrapper ,
@@ -14,5 +17,12 @@ const routes = [
     }
    
   ];
+  const Publicroutes = [
+    {
+      path: "/Login",
+      component: Login ,
+    
+    },
+  ]
 
-  export default routes;
+  export {Privateroutes,Publicroutes}

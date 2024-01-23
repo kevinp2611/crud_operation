@@ -1,40 +1,42 @@
 import "./App.css";
-import React, { Suspense, useContext, Component } from "react";
+import React, { Suspense, useContext } from "react";
 import {
   Routes,
   Route,
   BrowserRouter,
-  Redirect,
-  Switch,
 } from "react-router-dom";
-import routes from "./Router/my_route";
+import {Privateroutes} from "./Router/my_route";
+import {Publicroutes} from "./Router/my_route"
 import { ctx } from "./context";
-import Wrapper from "./Components/user/Wrapper";
-import Details from "./Components/userDetails/detaiils";
+import Protected from "./Protected";
+import Public from "./Public";
 
 const App = () => {
   const data = useContext(ctx);
-
-  const Protected = ({ children}) => {
-    const isAuthenticated = true;
-
-    return (
-      isAuthenticated?children :<h1>hello</h1>
-    );
-  };
 
   return (
     <BrowserRouter>
       <Suspense fallback={"Loading"}>
         <Routes>
-          <Route path="/" element={<Wrapper />}/>
-          <Route path="/user-detail" 
-          element={ <Protected>
-          <Details />
-        </Protected>} />
-          {/* {routes.map((route, index) => (
+          {/* <Route element={<Protected />}>
+            <Route element={<Wrapper />} path="/" exact />
+            <Route element={<Details />} path="/userDetails" />
+          </Route>
+          <Route element={<Public />}>
+            <Route element={<Login />} path="/login" />
+            </Route> */}
+            <Route element={<Protected />}>
+          {Privateroutes.map((route, index) => (
            <Route path={`${route.path}`} Component={route.component} key={index}/>
-           ))}  */}
+           ))} 
+             </Route>
+             <Route element={<Public />}>
+
+             {Publicroutes.map((route, index) => (
+           <Route path={`${route.path}`} Component={route.component} key={index}/>
+           ))} 
+
+             </Route>
         </Routes>
       </Suspense>
     </BrowserRouter>

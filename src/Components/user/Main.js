@@ -126,11 +126,12 @@ const User = () => {
           handleSubmit={handleSubmit}
           validate={validate}
           isvalidate={isvalidate}
+          isPaginated={true}
         />
 
         <Search searchText={searchText} />
 
-        <List searchText={searchText} handleEdit={handleEdit} />
+        <List searchText={searchText} handleEdit={handleEdit} isPaginated={true} listHeading={"Submitted Data:"}/>
       </>
     ),
     [submittedData, searchData]
