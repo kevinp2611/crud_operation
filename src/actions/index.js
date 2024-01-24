@@ -1,0 +1,1 @@
+export { userAction } from "./user.action";

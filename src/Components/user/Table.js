@@ -1,33 +1,34 @@
-import React, {useMemo} from "react";
-import { ctx } from "../../context";
-
-const Table = ({
-  inputArray,
-  buttonRef,
-  elementsRef,
-  isvalidate,
-  validate,
-  handleSubmit,
-}) => {
-  const isText = RegExp(/^[A-Z ]{3,}$/i);
-  const isEmail = RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i);
-
-  const validationSchema = {
-    name: {
-      required: true,
-      validator: {
-        regEx: isText,
-        error: "Please provide a valid name",
-      },
+import React, {useRef} from "react";
+import { useSelector, useDispatch } from 'react-redux';
+import { userAction } from "../../actions";
+ 
+const isText = RegExp(/^[A-Z ]{3,}$/i);
+const isEmail = RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i);
+const validationSchema = {
+  name: {
+    required: true,
+    validator: {
+      regEx: isText,
+      error: "Please provide a valid name",
     },
-    email: {
-      required: true,
-      validator: {
-        regEx: isEmail,
-        error: "Please provide a valid email",
-      },
+  },
+  email: {
+    required: true,
+    validator: {
+      regEx: isEmail,
+      error: "Please provide a valid email",
     },
-  };
+  },
+};
+
+const Form = ({ buttonRef, elementsRef, inputArray}) => {
+  const dispatch = useDispatch();
+  const { userData } = useSelector((state) => state);
+  const validate = useRef({
+    name: "true",
+    email: "true",
+  });
+
 
   const handlevalidate = ({ target }) => {
     const { name, value } = target;
@@ -66,9 +67,52 @@ const Table = ({
       button.disabled = false;
     }
   };
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    console.log("userDataaaa", userData)
 
-  return useMemo(
-    () => (
+    if (!isvalidate()) {
+      const index = userData.findIndex(
+        (x) => x.id === elementsRef.current["id"].current.value
+      );
+      let newState = [...userData];
+
+      const blank = {
+        name: elementsRef.current["name"].current.value,
+        email: elementsRef.current["email"].current.value,
+      };
+      if (index > -1) {
+        newState[index] = {
+          ...newState[index],
+          name: blank.name,
+          email: blank.email,
+        };
+        dispatch(userAction.editUserData(blank,index));
+        e.target.reset();
+      } else {
+        newState = [
+          ...userData,
+          {
+            id: (userData.length + 1).toString(),
+            name: blank.name,
+            email: blank.email,
+          },
+        ];
+        buttonRef.current.innerText = "Create";
+        e.target.reset();
+        dispatch(userAction.setUserData(newState));
+      }
+
+    }
+  };
+  const isvalidate = () => {
+    const haserror = Object.keys(validate.current).filter(
+      (val) => validate.current[val] === "true"
+    );
+    return haserror.length > 0;
+  };
+
+  return (
       <div>
         {console.log("form")}
         <h1>FormData </h1>
@@ -101,8 +145,6 @@ const Table = ({
           </button>
         </form>
       </div>
-    ),
-    [handleSubmit]
-  );
+    );
 };
-export default Table;
+export default Form;
