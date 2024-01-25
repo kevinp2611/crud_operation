@@ -1,33 +1,28 @@
-import React, { useState,useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { userAction } from "../../actions";
+import { useCallback, useEffect } from "react";
 
-function usePagination(items, pageLimit,setPageItems) {
-  const [pageNumber, setPageNumber] = useState(0);
+function usePagination(items, pageLimit, tmpStoreName) {
+  const dispatch = useDispatch();
+  const { pageNumber, searchtext,sortConfig} = useSelector((state) => state.users);
+
   const pageCount = Math.ceil(items.length / pageLimit);
-  console.log("item",items)
+  
 
-//   const changePage = (pageNumber) => {
-//     setPageNumber(pageNumber);
-//   };
-
-    const s = pageNumber * pageLimit;
-    const e = s + pageLimit;
-    
-   
-        console.log(s,e,items.slice(s, e))
-      
   useEffect(() => {
-    setPageItems(items.slice(s, e));
+    console.log("searchText", searchtext)
+    dispatch(userAction.setpagepeople(tmpStoreName, searchtext,sortConfig.key,sortConfig.direction));
   }, [pageNumber,items]);
 
- 
-
-
+  
   const nextPage = () => {
-    setPageNumber(Math.min(pageNumber + 1, pageCount - 1));
+    const nxtPage = Math.min(pageNumber + 1, pageCount - 1);
+    dispatch(userAction.setpagenumber(nxtPage));
   };
 
   const previousPage = () => {
-    setPageNumber(Math.max(pageNumber - 1, 0));
+    const prvPage = Math.max(pageNumber - 1, 0);
+    dispatch(userAction.setpagenumber(prvPage));
   };
 
   return {

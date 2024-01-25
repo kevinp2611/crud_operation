@@ -4,6 +4,8 @@ import { userAction } from "../../actions";
  
 const isText = RegExp(/^[A-Z ]{3,}$/i);
 const isEmail = RegExp(/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i);
+const isRating = RegExp(/^(10|[1-9])$/);
+// const isDate = RegExp(/^(0[1-9]|[12][0-9]|3[01])[- -.](0[1-9]|1[012])[- -.](19|20)\d\d$/)
 const validationSchema = {
   name: {
     required: true,
@@ -19,14 +21,31 @@ const validationSchema = {
       error: "Please provide a valid email",
     },
   },
+  rating: {
+    required: true,
+    validator: {
+      regEx: isRating,
+      error: "Please provide a valid rating",
+    },
+  },
+  date: {
+    required: true,
+    validator: {
+      regEx: false,
+      error: "Please provide a valid date",
+    },
+  },
 };
 
 const Form = ({ buttonRef, elementsRef, inputArray}) => {
   const dispatch = useDispatch();
-  const { userData } = useSelector((state) => state);
+  const {userData} = useSelector((state) => state.users);
+
   const validate = useRef({
     name: "true",
     email: "true",
+    rating:"true",
+    date:"true",
   });
 
 
@@ -80,12 +99,18 @@ const Form = ({ buttonRef, elementsRef, inputArray}) => {
       const blank = {
         name: elementsRef.current["name"].current.value,
         email: elementsRef.current["email"].current.value,
+        rating: elementsRef.current["rating"].current.value,
+        date: elementsRef.current["date"].current.value,
+
       };
+
       if (index > -1) {
         newState[index] = {
           ...newState[index],
           name: blank.name,
           email: blank.email,
+          rating: blank.rating,
+          date: blank.date,
         };
         dispatch(userAction.editUserData(blank,index));
         e.target.reset();
@@ -96,6 +121,8 @@ const Form = ({ buttonRef, elementsRef, inputArray}) => {
             id: (userData.length + 1).toString(),
             name: blank.name,
             email: blank.email,
+            rating:blank.rating,
+            date:blank.date,
           },
         ];
         buttonRef.current.innerText = "Create";

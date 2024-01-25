@@ -1,10 +1,11 @@
-import React, { useEffect,useState,useMemo } from "react";
+import React from "react";
 import usePagination from "./usePagination.js";
 
+
+
 const Pagination = (props) => {
-    
-  const { pageNumber, pageCount, nextPage, previousPage } =
-    usePagination(props.items, props.pageLimit,props.setPageItems);
+  const { pageNumber, pageCount, nextPage, previousPage} =
+    usePagination(props.items, props.pageLimit, props.tmpStoreName);
 
   return (
     <div>
@@ -16,4 +17,4 @@ const Pagination = (props) => {
   )
 };
 
-export default Pagination;
+export { Pagination };

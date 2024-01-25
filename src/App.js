@@ -37,6 +37,8 @@ const App = () => {
            ))} 
 
              </Route>
+
+
         </Routes>
       </Suspense>
     </BrowserRouter>

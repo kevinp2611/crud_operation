@@ -1,8 +1,10 @@
-import { useContext, useCallback, useMemo } from "react";
-import { user } from "./userContext";
+import { useCallback } from "react";
+import { useSelector, useDispatch } from "react-redux";
+import { userAction } from "../../actions";
 
 const Search = ({ searchText }) => {
-  const { submittedData, setSearchData } = useContext(user);
+  const dispatch = useDispatch();
+  const { userData,sortConfig } = useSelector((state) => state);
 
   const debounce = (func) => {
     let timer;
@@ -17,32 +19,26 @@ const Search = ({ searchText }) => {
   };
 
   const handleSearch = (value) => {
-    const filterData = value
-      ? Object.values(submittedData).filter((user) => {
-          return (
-            user.name.toLowerCase().includes(value) ||
-            user.email.toLowerCase().includes(value)
-          );
-        })
-      : [];
-    setSearchData(filterData);
+    const  tmpStoreName='userpagePeople'
+    dispatch(userAction.setpagepeople(tmpStoreName, value,sortConfig.key,sortConfig.direction ));
+  
+ 
   };
 
-  const optimizedFn = useCallback(debounce(handleSearch), [submittedData]);
+  const optimizedFn = useCallback(debounce(handleSearch), [userData]);
 
-  return useMemo(
-    () => (
-      <>
-        {console.log("search")}
-        <input
-          type="text"
-          name="searchTerm"
-          ref={searchText}
-          onChange={(e) => optimizedFn(e.target.value)}
-        />
-      </>
-    ),
-    [optimizedFn]
+  return (
+    <>
+      {console.log("search")}
+      <input
+        type="text"
+        name="searchTerm"
+        ref={searchText}
+        onChange={(e) => {
+          optimizedFn(e.target.value);
+        }}
+      />
+    </>
   );
 };
 export default Search;

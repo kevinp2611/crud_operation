@@ -1,5 +1,6 @@
 import List from "./List";
 import Form from "./Table";
+import Search from "./search"
 import { useRef, useMemo, createRef } from "react";
 
 const inputArray = [
@@ -18,6 +19,22 @@ const inputArray = [
     placeholder: "Enter Email",
     name: "email",
     defaultvalue: "",
+  },
+  {
+    key: "rating",
+    id: "rating",
+    type: "number",
+    placeholder: "Enter Rating",
+    name: "rating",
+    defaultvalue: 0,
+  },
+  {
+    key: "date",
+    id: "date",
+    type: "date",
+    placeholder: "Enter Date",
+    name: "date",
+    defaultvalue:"" ,
   },
   {
     key: "id",
@@ -48,7 +65,7 @@ const User = () => {
 
       <Form buttonRef={buttonRef} elementsRef={elementsRef} inputArray={inputArray} />
 
-      {/* <Search searchText={searchText} /> */}
+      <Search searchText={searchText} />
 
       <List
         searchText={searchText}

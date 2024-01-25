@@ -1,8 +1,10 @@
 // import Details from "../userDetails/detaiils";
 import NoFound from "./NoFound";
 import { useNavigate } from "react-router-dom";
-import Pagination from "./Pagination.js";
+import { Pagination } from "./Pagination.js";
 import { useDispatch, useSelector } from "react-redux";
+import { userAction } from "../../actions/user.action.js";
+import { useMemo } from "react";
 
 const List = ({
   searchText,
@@ -12,46 +14,43 @@ const List = ({
   listHeading,
 }) => {
   let navigate = useNavigate();
-  const userData  = useSelector((state) => state.userData);
   const dispatch = useDispatch();
-  // const [pagePeople, setPagePeople] = useState([]);
-  // const pageLimit = 2;
+  const { userData, searchtext, searchdata, pageNumber,userpagePeople,sortConfig } = useSelector(
+    (state) => state.users
+  );
+console.log("userpagePeople", userpagePeople)
+  const pageLimit = 2;
+  // const s = pageNumber * pageLimit;
+  // const e = s + pageLimit;
 
   const handleDelete = (index) => {
     const ans = window.confirm("are you sure ");
     if (ans) {
-      const updatedData = userData.filter((data) => data.id !== index);
-      dispatch(updatedData);
+      dispatch(userAction.deleteUserData(index));
     }
   };
 
-  // const requestSort = (key) => {
-  //   let direction = "ascending";
-  //   console.log("hey hoe", key);
-  //   if (sortConfig.key === key && sortConfig.direction === "ascending") {
-  //     direction = "descending";
-  //   }
-  //   setSortConfig({ key, direction });
-  // };
-  // var sortedBooks = [];
-  // sortedBooks = [...pagePeople];
-  // if (sortConfig !== null) {
-  //   sortedBooks.sort((a, b) => {
-  //     if (a[sortConfig.key] < b[sortConfig.key]) {
-  //       return sortConfig.direction === "ascending" ? -1 : 1;
-  //     }
-  //     if (a[sortConfig.key] > b[sortConfig.key]) {
-  //       return sortConfig.direction === "ascending" ? 1 : -1;
-  //     }
-  //     return 0;
-  //   });
-  // }
+  const requestSort = (key) => {
+    let direction = "ascending";
+   
+   
+    if (sortConfig.key === key && sortConfig.direction === "ascending") {
+    direction = "descending";
+    }
+    // sortConfig.key=key;
+    // sortConfig.direction=direction;
+    const  tmpStoreName='userpagePeople'
+
+    dispatch(userAction.setpagepeople(tmpStoreName, searchtext,key,direction ));
+  };
+
   const handleEdit = (data) => {
     elementsRef.current["name"].current.value = data.name;
     elementsRef.current["email"].current.value = data.email;
     elementsRef.current["id"].current.value = data.id;
     buttonRef.current.innerText = "Edit";
   };
+
   return (
     <div>
       <h2>{listHeading}</h2>
@@ -113,10 +112,53 @@ const List = ({
           </tbody>
         </table> */}
 
-      <ul>{
-          userData.map((data, index) => (
-            <li key={index}>
-              {`Name: ${data.name}, Email: ${data.email}`}
+<table>
+          <thead>
+            <tr>
+              <th
+                style={{ cursor: "pointer" }}
+                onClick={() => requestSort("name")}
+              >
+                Name
+              </th>
+              <th
+                style={{ cursor: "pointer" }}
+                onClick={() => requestSort("email")}
+              >
+                Email
+              </th>
+              <th
+                style={{ cursor: "pointer" }}
+                onClick={() => requestSort("rating")}
+              >
+                Rating
+              </th>
+              <th
+                style={{ cursor: "pointer" }}
+                onClick={() => requestSort("date")}
+              >
+                Date
+              </th>
+              <th>action</th>
+            </tr>
+          </thead>
+          <tbody>
+        {(userpagePeople  === undefined || !userpagePeople.length) && (
+          <div>
+            <NoFound />
+          </div>
+        )}
+        {userpagePeople && userpagePeople.map(
+          (data, index) => (
+            <tr>
+            <td> {data.name}</td>
+
+            <td>{data.email}</td>
+            
+            <td>&nbsp;&nbsp;{data.rating}</td>
+
+            <td>&nbsp;&nbsp;{data.date}</td>
+            <td>
               <button type="button" onClick={() => handleEdit(data)}>
                 Edit
               </button>
@@ -131,17 +173,14 @@ const List = ({
               >
                 Details
               </button>
-            </li>
-          ))}
-      </ul>
+            </td>
+          </tr>
+          )
+        )}
+    </tbody>
+        </table> 
 
-      {/* {isPaginated && (
-          <Pagination
-            items={userData}
-            pageLimit={pageLimit}
-            setPageItems={setPagePeople}
-          />
-        )} */}
+      {isPaginated && <Pagination items={userData} pageLimit={pageLimit} tmpStoreName={'userpagePeople'}/>}
     </div>
   );
 };
