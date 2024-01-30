@@ -44,6 +44,20 @@ const setpagenumber = (value) => {
   };
 };
 
+
+const setpage = (value) => {
+  return {
+    type: userConstant.SET_PAGE,
+    payload: value,
+  };
+};
+const setError = (name,err) => {
+  return {
+    type: userConstant.SET_ERROR,
+    payload: {name,err}
+  };
+};
+
 export const userAction = {
   setUserData,
   editUserData,
@@ -52,4 +66,6 @@ export const userAction = {
   setsearchtext,
   setpagepeople,
   setpagenumber,
+  setpage,
+  setError,
 };

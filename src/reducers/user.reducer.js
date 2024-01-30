@@ -8,7 +8,9 @@ const initState = {
   searchtext: "",
   pageNumber: 0,
   pageLimit: 2,
+  page: "basic",
   sortConfig: { key: null, direction: null },
+  error: {},
 };
 
 export const userReducer = (state = initState, action) => {
@@ -102,10 +104,9 @@ export const userReducer = (state = initState, action) => {
             titleB = b[key].toLowerCase();
           }
           if (datatype === "date") {
-            titleA =new Date(a[key])
-            titleB = new Date(b[key])
+            titleA = new Date(a[key]);
+            titleB = new Date(b[key]);
           }
-         
 
           if (titleA < titleB) {
             return action.payload.direction === "ascending" ? -1 : 1;
@@ -129,6 +130,19 @@ export const userReducer = (state = initState, action) => {
 
     case userConstant.SET_PAGENUMBER:
       return { ...state, pageNumber: action.payload };
+
+    case userConstant.SET_PAGE:
+      return { ...state, page: action.payload };
+
+    case userConstant.SET_ERROR:
+      return {
+        ...state,
+
+        error: {
+          ...state.error,
+          [action?.payload?.name]: action?.payload?.err,
+        },
+      };
 
     default:
       return state;
