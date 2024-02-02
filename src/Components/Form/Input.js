@@ -1,28 +1,24 @@
-import { useDispatch, useSelector } from "react-redux";
-import handlevalidate from "./validation";
-import inputEle from "./inputEle";
-import { useRef, useMemo, createRef } from "react";
+import { forwardRef } from "react";
 
-const Input = (props) => {
-  const dispatch = useDispatch();
-  const { error } = useSelector((state) => state.users);
-
+const Input = forwardRef(function Input(props, ref) {
+  const { inputRef, errorRef } = ref;
+  const { label, id, handleChange, ...otherProps } = props;
+  console.log(errorRef);
   return (
-    <label>
-      {props.heading}
-      <input
-        id={props.name}
-        name={props.name}
-        type={props.type}
-        // value={formData.current[props.name]?.current?.value}
-        // ref={formData.current[props.name]}
-        // defaultValue={formData.current[props.name]?.current?.value}
-        placeholder={props.placeholder}
-        onChange={(e) => handlevalidate(e, dispatch)}
-        onBlur={(e) => handlevalidate(e, dispatch)}
-      />
-    </label>
+    <div>
+      <label>
+        {label}
+        <input
+          id={id}
+          {...otherProps}
+          ref={inputRef}
+          onChange={handleChange}
+          onBlur={handleChange}
+        />
+      </label>
+      <div ref={errorRef} id={`${id}_error`} style={{ display: "none" }}></div>
+    </div>
   );
-};
+});
 
 export default Input;

@@ -5,14 +5,14 @@ const isPswd = RegExp(
 );
 const isPhone = RegExp(/^[6-9]\d{9}$/);
 const validationSchema = {
-  FirstName: {
+  first_name: {
     required: true,
     validator: {
       regEx: isName,
       error: "Enter valid Firstname",
     },
   },
-  LastName: {
+  last_name: {
     required: true,
     validator: {
       regEx: isName,
@@ -33,11 +33,11 @@ const validationSchema = {
       error: "Enter valid Password",
     },
   },
-  confirmpassword: {
+  confirm_password: {
     required: true,
   },
 
-  Contact: {
+  contact_number: {
     required: true,
     validator: {
       regEx: isPhone,

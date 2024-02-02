@@ -1,4 +1,4 @@
-import  Input  from "./Input";
+import Input from "./Input";
 import inputEle from "./inputEle";
 import { useDispatch } from "react-redux";
 import { userAction } from "../../actions";

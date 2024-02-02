@@ -1,50 +1,45 @@
 import "./App.css";
-import React, { Suspense, useContext } from "react";
-import {
-  Routes,
-  Route,
-  BrowserRouter,
-  Form,
-} from "react-router-dom";
-import {Privateroutes} from "./Router/my_route";
-import {Publicroutes} from "./Router/my_route"
-import { ctx } from "./context";
+import React, { Suspense } from "react";
+import { Routes, Route, BrowserRouter } from "react-router-dom";
+import { Privateroutes } from "./Router/my_route";
+import { Publicroutes } from "./Router/my_route";
 import Protected from "./Protected";
 import Public from "./Public";
-import Upadateform from "./Components/Form/Updateform";
 
-
+import Wrapper from "./Components/user/Wrapper";
+import Details from "./Components/userDetails/detaiils";
+import Login from "./Components/Login/Login";
 
 const App = () => {
-  const data = useContext(ctx);
-
   return (
     <BrowserRouter>
       <Suspense fallback={"Loading"}>
         <Routes>
-          {/* <Route element={<Protected />}>
+          <Route element={<Protected />}>
             <Route element={<Wrapper />} path="/" exact />
             <Route element={<Details />} path="/userDetails" />
           </Route>
           <Route element={<Public />}>
             <Route element={<Login />} path="/login" />
-            </Route> */}
-            {/* <Route element={<Protected />}>
-          {Privateroutes.map((route, index) => (
-           <Route path={`${route.path}`} Component={route.component} key={index}/>
-           ))} 
-             </Route>
-             <Route element={<Public />}>
-
-             {Publicroutes.map((route, index) => (
-           <Route path={`${route.path}`} Component={route.component} key={index}/>
-           ))} 
-
-             </Route> */}
-
-             <Route path="/" element={<Upadateform />}> </Route>
-
-
+          </Route>
+          <Route element={<Protected />}>
+            {Privateroutes.map((route, index) => (
+              <Route
+                path={`${route.path}`}
+                Component={route.component}
+                key={index}
+              />
+            ))}
+          </Route>
+          <Route element={<Public />}>
+            {Publicroutes.map((route, index) => (
+              <Route
+                path={`${route.path}`}
+                Component={route.component}
+                key={index}
+              />
+            ))}
+          </Route>
         </Routes>
       </Suspense>
     </BrowserRouter>
